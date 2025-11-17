@@ -9,6 +9,9 @@
     :root {
       color-scheme: dark;
     }
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -49,7 +52,6 @@
     }
     input, select, textarea {
       width: 100%;
-      box-sizing: border-box;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.15);
       padding: 8px 10px;
@@ -93,6 +95,66 @@
       border-radius: 999px;
       background: #4bb5ff;
     }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .tab-btn {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 6px 10px;
+      font-size: 13px;
+      background: transparent;
+      color: #f5f5f7;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg,#4bb5ff,#7b5cff);
+      color: #05060b;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .hidden {
+      display: none;
+    }
+    .ai-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      background: rgba(255,255,255,0.06);
+      color: #f5f5f7;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ai-btn span.icon {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+    .ai-btn + .ai-btn {
+      margin-top: 6px;
+    }
+    .ai-hint {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-top: 6px;
+    }
+    .primary-btn {
+      margin-top: 4px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      background: linear-gradient(135deg,#4bb5ff,#7b5cff);
+      color: #05060b;
+    }
   </style>
 </head>
 <body>
@@ -100,21 +162,27 @@
   <div class="card" style="margin-bottom: 18px;">
     <div class="card-title">👋 Привет, <span id="username">друг</span></div>
     <div class="subtitle">
-      Быстрая панель GENESIS: создай задачу за 10 секунд — она уйдёт прямо в бота.
+      GENESIS Web — быстрый доступ к задачам и AI-функциям прямо из Telegram.
     </div>
     <div class="pill">
       <span class="pill-dot"></span>
-      <span>Все действия сохраняются в Telegram-боте</span>
+      <span>Все действия выполняются ботом GENESIS</span>
     </div>
   </div>
 
-  <div class="card">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="task">Задача</button>
+    <button class="tab-btn" data-tab="ai">AI-панель</button>
+  </div>
+
+  <!-- TAB 1: создание задачи -->
+  <div class="card" id="tab-task">
     <div class="card-title">🧠 Новая задача</div>
     <div style="display:flex; flex-direction:column; gap:10px;">
 
       <div>
         <label for="title">Заголовок</label>
-        <input id="title" placeholder="Например: Разобрать связку по Польше" />
+        <input id="title" placeholder="Например: протестить новую связку" />
       </div>
 
       <div>
@@ -143,19 +211,39 @@
         <div class="hint">Эта инфа уйдёт боту — он создаст задачу в твоей системе.</div>
       </div>
 
-      <button id="submitBtn" style="
-        margin-top: 4px;
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: none;
-        font-size: 15px;
-        font-weight: 600;
-        background: linear-gradient(135deg,#4bb5ff,#7b5cff);
-        color: #05060b;
-      ">
+      <button id="submitTaskBtn" class="primary-btn">
         🚀 Отправить в GENESIS
       </button>
+    </div>
+  </div>
+
+  <!-- TAB 2: AI панель -->
+  <div class="card hidden" id="tab-ai">
+    <div class="card-title">🤖 AI-панель</div>
+
+    <button class="ai-btn" data-action="ai_plan_today">
+      <span>🧠 План на сегодня</span>
+      <span class="icon">›</span>
+    </button>
+
+    <button class="ai-btn" data-action="ai_goals_week">
+      <span>🎯 Цели на неделю</span>
+      <span class="icon">›</span>
+    </button>
+
+    <button class="ai-btn" data-action="ai_insights_chat">
+      <span>💡 Инсайты из последних чатов</span>
+      <span class="icon">›</span>
+    </button>
+
+    <button class="ai-btn" data-action="ai_clean_tasks">
+      <span>🧹 Почистить задачи</span>
+      <span class="icon">›</span>
+    </button>
+
+    <div class="ai-hint">
+      GENESIS пришлёт ответы прямо в чат.  
+      Ты можешь продолжить диалог с ботом после любого AI-отчёта.
     </div>
   </div>
 </div>
@@ -171,8 +259,30 @@
     document.getElementById("username").textContent = name;
   }
 
-  const btn = document.getElementById("submitBtn");
-  btn.addEventListener("click", () => {
+  // переключение табов
+  const tabs = document.querySelectorAll(".tab-btn");
+  const tabTask = document.getElementById("tab-task");
+  const tabAi = document.getElementById("tab-ai");
+
+  tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabs.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const tab = btn.dataset.tab;
+      if (tab === "task") {
+        tabTask.classList.remove("hidden");
+        tabAi.classList.add("hidden");
+      } else {
+        tabAi.classList.remove("hidden");
+        tabTask.classList.add("hidden");
+      }
+    });
+  });
+
+  // отправка задачи
+  const submitTaskBtn = document.getElementById("submitTaskBtn");
+  submitTaskBtn.addEventListener("click", () => {
     const title = document.getElementById("title").value.trim();
     const project = document.getElementById("project").value.trim();
     const priority = document.getElementById("priority").value;
@@ -196,6 +306,18 @@
     tg.sendData(JSON.stringify(payload));
     tg.HapticFeedback.notificationOccurred("success");
     tg.close();
+  });
+
+  // обработка AI-кнопок
+  const aiButtons = document.querySelectorAll(".ai-btn");
+  aiButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const action = btn.dataset.action;
+      const payload = { action };
+      tg.sendData(JSON.stringify(payload));
+      tg.HapticFeedback.impactOccurred("light");
+      tg.close();
+    });
   });
 </script>
 </body>
