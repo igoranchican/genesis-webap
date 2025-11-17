@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>GENESIS Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: #05050a;
+      color: #f5f5f7;
+    }
+    .wrap {
+      padding: 16px;
+    }
+    h1 {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      opacity: .75;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .card {
+      background: #141421;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+    .card-text {
+      font-size: 13px;
+      opacity: .85;
+    }
+    button {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: none;
+      background: #5865f2;
+      color: #fff;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>GENESIS</h1>
+  <div class="subtitle" id="user-info">
+    Загружаю данные из Telegram…
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧠 План на сегодня</div>
+    <div class="card-text">
+      Здесь позже можно будет подтягивать AI-план из бота (через отдельный API).
+      Пока это просто статическая демка, чтобы Mini App работал.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Мои задачи</div>
+    <div class="card-text">
+      На следующем шаге сюда подключим реальный список задач из твоей БД.
+    </div>
+  </div>
+
+  <button id="demo-btn">Отправить демо-сообщение в чат</button>
+</div>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.expand(); // разворачиваем мини-апп
+
+  const init = tg.initDataUnsafe || {};
+  const infoBlock = document.getElementById('user-info');
+
+  if (init.user) {
+    const u = init.user;
+    const name = (u.first_name || '') + ' ' + (u.last_name || '');
+    infoBlock.textContent = `Пользователь: ${name.trim() || u.username || u.id}`;
+  } else {
+    infoBlock.textContent = 'Не удалось получить данные пользователя (initData пустой).';
+  }
+
+  // Кнопка, которая шлёт сообщение обратно в чат
+  document.getElementById('demo-btn').onclick = () => {
+    tg.sendData(JSON.stringify({action: 'demo', payload: 'hello_from_mini_app'}));
+    tg.close();
+  };
+</script>
+</body>
+</html>
