@@ -2,98 +2,389 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>GENESIS Mini App</title>
+  <title>GENESIS · Mini App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    :root {
+      --bg-main: #050509;
+      --bg-card: #111320;
+      --bg-card-soft: #181b2a;
+      --accent: #12c2e9;
+      --accent-soft: rgba(18, 194, 233, 0.25);
+      --danger: #ff4b5c;
+      --text-main: #f5f5f7;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(255, 255, 255, 0.06);
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-      background: #05050a;
-      color: #f5f5f7;
+      background: radial-gradient(circle at top, #111320 0, #050509 35%, #020308 100%);
+      color: var(--text-main);
     }
-    .wrap {
-      padding: 16px;
+
+    .app {
+      padding: 18px 16px 24px;
+      max-width: 640px;
+      margin: 0 auto;
     }
-    h1 {
-      font-size: 22px;
-      margin-bottom: 4px;
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
     }
-    .subtitle {
-      opacity: .75;
-      font-size: 13px;
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #12c2e9 0, #111320 40%, #020308 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      box-shadow: 0 0 0 2px rgba(18, 194, 233, 0.4);
+      font-size: 20px;
+    }
+
+    .header-text-main {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .header-text-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(17, 19, 32, 0.85);
+      border: 1px solid rgba(18, 194, 233, 0.28);
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #00f29e;
+      box-shadow: 0 0 8px rgba(0, 242, 158, 0.8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
       margin-bottom: 16px;
     }
+
     .card {
-      background: #141421;
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
+      background: radial-gradient(circle at top left, rgba(18, 194, 233, 0.18) 0, var(--bg-card) 40%, #050509 100%);
+      border-radius: var(--radius-lg);
+      padding: 12px 11px 11px;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
     }
+
     .card-title {
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-    .card-text {
       font-size: 13px;
-      opacity: .85;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    button {
-      margin-top: 10px;
-      width: 100%;
-      padding: 10px 12px;
+
+    .card-kpi {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .card-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .section-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin: 18px 0 8px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .qa-btn {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      background: #101221;
+      padding: 9px 6px 8px;
+      font-size: 11px;
+      color: var(--text-main);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .qa-btn span {
+      font-size: 15px;
+    }
+
+    .qa-label {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    .tasks-card {
+      background: linear-gradient(135deg, rgba(18, 194, 233, 0.04), rgba(255, 75, 92, 0.06));
+      border-radius: var(--radius-lg);
+      padding: 11px 11px 10px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .task-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      padding: 6px 0;
+    }
+
+    .task-row + .task-row {
+      border-top: 1px dashed rgba(255, 255, 255, 0.04);
+    }
+
+    .task-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-width: 75%;
+    }
+
+    .task-title {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      padding: 3px 7px;
       border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .badge-red {
+      border-color: rgba(255, 75, 92, 0.7);
+      color: #ff9ba7;
+      background: rgba(255, 75, 92, 0.12);
+    }
+
+    .badge-yellow {
+      border-color: #f5c85b;
+      color: #f5d88d;
+      background: rgba(245, 200, 91, 0.16);
+    }
+
+    .badge-green {
+      border-color: #00f29e;
+      color: #b4ffd9;
+      background: rgba(0, 242, 158, 0.14);
+    }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0.8;
+    }
+
+    .version-pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(17, 19, 32, 0.9);
+      font-size: 10px;
+    }
+
+    button {
       border: none;
-      background: #5865f2;
-      color: #fff;
-      font-size: 14px;
+      outline: none;
+    }
+
+    @media (max-width: 360px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .quick-actions {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>GENESIS</h1>
-  <div class="subtitle" id="user-info">
-    Загружаю данные из Telegram…
+<div class="app">
+  <div class="pill">
+    <div class="pill-dot"></div>
+    GENESIS · AI productivity cockpit
   </div>
 
-  <div class="card">
-    <div class="card-title">🧠 План на сегодня</div>
-    <div class="card-text">
-      Здесь позже можно будет подтягивать AI-план из бота (через отдельный API).
-      Пока это просто статическая демка, чтобы Mini App работал.
+  <div class="header">
+    <div class="avatar" id="avatar-initials">G</div>
+    <div>
+      <div class="header-text-main" id="user-name">GENESIS пользователь</div>
+      <div class="header-text-sub" id="user-sub">
+        Подтягиваю задачи и фокус на сегодня…
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">📋 Мои задачи</div>
-    <div class="card-text">
-      На следующем шаге сюда подключим реальный список задач из твоей БД.
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">🧠 Фокус на сегодня</div>
+      <div class="card-kpi" id="kpi-focus">3 ключевые задачи</div>
+      <div class="card-caption">Рекомендуется закрыть до 19:00.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔥 Нагрузкa</div>
+      <div class="card-kpi" id="kpi-load">Средняя</div>
+      <div class="card-caption">GENESIS подстроит план под твою энергию.</div>
     </div>
   </div>
 
-  <button id="demo-btn">Отправить демо-сообщение в чат</button>
+  <div class="section-title">Быстрые действия</div>
+  <div class="quick-actions">
+    <button class="qa-btn" id="btn-plan">
+      <span>🧠 План</span>
+      <div class="qa-label">Попросить AI собрать план на день</div>
+    </button>
+    <button class="qa-btn" id="btn-my-tasks">
+      <span>📋 Задачи</span>
+      <div class="qa-label">Открыть список задач в чате</div>
+    </button>
+    <button class="qa-btn" id="btn-new-task">
+      <span>➕ Задача</span>
+      <div class="qa-label">Создать новую задачу через AI</div>
+    </button>
+  </div>
+
+  <div class="section-title">Сегодня в фокусе</div>
+  <div class="tasks-card" id="tasks-placeholder">
+    <div class="task-row">
+      <div class="task-main">
+        <div class="task-title">Нажми «План» или «Задачи» сверху</div>
+        <div class="task-meta">
+          GENESIS пришлёт тебе детальный список прямо в чат.
+        </div>
+      </div>
+      <div class="badge badge-green">AI assist</div>
+    </div>
+    <div class="task-row">
+      <div class="task-main">
+        <div class="task-title">Голосовые, фото, тексты</div>
+        <div class="task-meta">Все это бот уже умеет переваривать — используй как вход.</div>
+      </div>
+      <div class="badge badge-yellow">hint</div>
+    </div>
+    <div class="task-row">
+      <div class="task-main">
+        <div class="task-title">📲 Mini App = панель управления</div>
+        <div class="task-meta">А основная магия — в самом GENESIS-боте.</div>
+      </div>
+      <div class="badge badge-red">core</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>Подключён к Telegram WebApp</div>
+    <div class="version-pill">GENESIS Web · v1.1</div>
+  </div>
 </div>
 
 <script>
   const tg = window.Telegram.WebApp;
-  tg.expand(); // разворачиваем мини-апп
+  tg.expand();
 
-  const init = tg.initDataUnsafe || {};
-  const infoBlock = document.getElementById('user-info');
-
-  if (init.user) {
-    const u = init.user;
-    const name = (u.first_name || '') + ' ' + (u.last_name || '');
-    infoBlock.textContent = `Пользователь: ${name.trim() || u.username || u.id}`;
-  } else {
-    infoBlock.textContent = 'Не удалось получить данные пользователя (initData пустой).';
+  // Настраиваем тему под тёмный / светлый Telegram
+  const theme = tg.colorScheme || "dark";
+  if (theme === "light") {
+    document.body.style.background =
+      "radial-gradient(circle at top, #f4f4f7 0, #e5e7eb 35%, #d1d5db 100%)";
+    document.body.style.color = "#030712";
   }
 
-  // Кнопка, которая шлёт сообщение обратно в чат
-  document.getElementById('demo-btn').onclick = () => {
-    tg.sendData(JSON.stringify({action: 'demo', payload: 'hello_from_mini_app'}));
-    tg.close();
+  const init = tg.initDataUnsafe || {};
+  const user = init.user;
+
+  const userNameEl = document.getElementById("user-name");
+  const userSubEl = document.getElementById("user-sub");
+  const avatarInitialsEl = document.getElementById("avatar-initials");
+
+  if (user) {
+    const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
+    userNameEl.textContent = fullName || user.username || `ID ${user.id}`;
+    userSubEl.textContent = "Mini App связан с твоим GENESIS-ботом.";
+    const initials = (user.first_name || "?")[0].toUpperCase();
+    avatarInitialsEl.textContent = initials;
+  } else {
+    userNameEl.textContent = "GENESIS пользователь";
+    userSubEl.textContent = "initData пустой — открой из настоящего бота.";
+  }
+
+  function sendAction(action, payload = {}) {
+    const data = { source: "genesis_webapp", action, payload };
+    tg.sendData(JSON.stringify(data));
+    tg.close(); // закрываем мини-апп после действия
+  }
+
+  document.getElementById("btn-plan").onclick = () => {
+    sendAction("ai_plan_today", { hint: "from_webapp" });
+  };
+
+  document.getElementById("btn-my-tasks").onclick = () => {
+    sendAction("open_my_tasks");
+  };
+
+  document.getElementById("btn-new-task").onclick = () => {
+    sendAction("create_task_ai", { mode: "quick" });
   };
 </script>
 </body>
